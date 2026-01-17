@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>MiniSQL Order System</title>
+</head>
+
+<body>
+    <h1>MiniSQL Order System</h1>
+
+    <h2>Create User</h2>
+    <form id="userForm">
+        <input type="number" id="userId" placeholder="User ID" required />
+        <input type="text" id="userName" placeholder="Name" required />
+        <button type="submit">Create User</button>
+    </form>
+
+    <h2>Create Order</h2>
+    <form id="orderForm">
+        <input type="number" id="orderId" placeholder="Order ID" required />
+        <input type="number" id="orderUserId" placeholder="User ID" required />
+        <input type="text" id="orderProduct" placeholder="Product" required />
+        <input type="number" id="amount" placeholder="Amount" required />
+        <button type="submit">Create Order</button>
+    </form>
+
+    <h2>Users</h2>
+    <button onclick="loadUsers()">Load Users</button>
+    <pre id="output"></pre>
+
+    <h2>User Orders</h2>
+    <button onclick="loadUserOrders()">Load User Orders</button>
+    <pre id="ordersOutput"></pre>
+
+    <script>
+        document.getElementById("userForm").onsubmit = async (e) => {
+            e.preventDefault();
+            await fetch("/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: userId.value,
+                    name: userName.value
+                })
+            });
+            alert("User created");
+        };
+
+        document.getElementById("orderForm").onsubmit = async (e) => {
+            e.preventDefault();
+            await fetch("/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: orderId.value,
+                    user_id: orderUserId.value,
+                    product: orderProduct.value,
+                    amount: amount.value
+                })
+            });
+            alert("Order created");
+        };
+
+        async function loadUsers() {
+            const res = await fetch("/users");
+            const data = await res.json();
+            document.getElementById("output").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function loadUserOrders() {
+            const res = await fetch("/user-orders");
+            const data = await res.json();
+
+            document.getElementById("ordersOutput").textContent =
+                JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+
+</html>
